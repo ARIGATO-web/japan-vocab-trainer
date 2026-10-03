@@ -435,64 +435,124 @@ h1 {
     font-size: 18px;
 }
 
-/* responsive */
-@media (max-width: 800px) {
-    body {
-        padding: 12px;
+.library-toolbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 16px;
+    padding: 16px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.filter-group select {
+    width: 100%;
+    height: 44px;
+    box-sizing: border-box;
+}
+
+/* การเรียงอยู่แถวล่าง */
+.sort-group {
+    grid-column: 1 / -1;
+}
+
+/* ช่องเรียง 2 ช่องอยู่แนวนอน */
+.sort-row {
+    display: flex;
+    gap: 8px;
+}
+
+.sort-row select:first-child {
+    width: 130px;
+}
+
+.sort-row select:last-child {
+    width: 150px;
+}
+
+@media (max-width: 600px) {
+
+    .library-toolbar {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px 12px;
+        padding: 14px;
     }
 
-    .page {
-        padding: 16px;
+    .filter-group label {
+        font-size: 14px;
+        margin-bottom: 5px;
     }
+
+    .filter-group select {
+        height: 42px;
+        font-size: 14px;
+    }
+
+    .sort-row {
+        gap: 8px;
+    }
+
+    .sort-row select:first-child {
+        width: 125px;
+    }
+
+    .sort-row select:last-child {
+        width: 145px;
+    }
+}
+
+/* =========================
+   Practice - Mobile
+   ========================= */
+
+@media (max-width: 600px) {
 
     .practice-layout {
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 20px;
     }
 
-    #wordList {
-        grid-template-columns: 1fr;
+    .practice-left,
+    .practice-right {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
 
     .practice-right {
-        order: 2;
+        margin-top: 0;
+    }
+
+    .practice-word-card {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .question-box {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .practice-left select,
+    .practice-left input {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .practice-back-button {
+        order: 3;
+        position: static !important;
+        align-self: flex-start;
+        margin-top: 20px;
     }
 }
-.home-title {
-    text-align: center;
-    margin-bottom: 10px;
-}
 
-.title-decoration {
-    font-size: 42px;
-    margin-bottom: 8px;
-}
-
-.home-title h1 {
-    margin: 0;
-    font-size: 38px;
-    letter-spacing: 2px;
-}
-
-.home-title p {
-    margin: 8px 0 4px;
-    color: #b47796;
-    font-size: 17px;
-}
-
-.home-title h2 {
-    margin: 4px 0 15px;
-    font-size: 17px;
-    font-weight: normal;
-    color: #806d7b;
-}
-
-.title-line {
-    width: 120px;
-    height: 2px;
-    margin: 0 auto;
-    background: #d99ab8;
-    border-radius: 10px;
-}
 </style>
 </head>
 
@@ -670,9 +730,6 @@ h1 {
                 <p id="score">คะแนน: 0</p>
             </div>
 
-            <button class="back-button" onclick="showPage('homePage')">
-                ← กลับหน้าหลัก
-            </button>
         </div>
 
 
@@ -683,7 +740,7 @@ h1 {
                     <div class="empty-icon">📖</div>
                     <h2>พร้อมฝึกศัพท์แล้ว</h2>
                     <p>กด 🎲 สุ่มคำศัพท์<br>เพื่อเริ่มฝึก</p>
-                </div>
+                </div>   
 
                 <div id="practiceCardContent" class="practice-card-content">
                     <h2 id="practiceCardWord" class="practice-card-word"></h2>
@@ -720,7 +777,11 @@ h1 {
                 </div>
             </div>
         </div>
-
+                        <!-- ต้องอยู่นอก practice-right -->
+                    <button class="back-button practice-back-button"
+                            onclick="showPage('homePage')">
+                        ← กลับหน้าหลัก
+                    </button>
     </div>
 </div>
 
@@ -735,7 +796,11 @@ h1 {
            oninput="showLibrary()">
 
     <div class="library-toolbar">
+
+    <!-- ระดับ -->
+    <div class="filter-group">
         <label>📚 ระดับ</label>
+
         <select id="libraryLevel" onchange="showLibrary()">
             <option value="ALL">ทั้งหมด</option>
             <option value="N5">N5</option>
@@ -744,8 +809,13 @@ h1 {
             <option value="N2">N2</option>
             <option value="N1">N1</option>
         </select>
+    </div>
 
+
+    <!-- หมวด -->
+    <div class="filter-group">
         <label>🏷️ หมวด</label>
+
         <select id="libraryCategory" onchange="showLibrary()">
             <option value="ALL">ทั้งหมด</option>
             <option value="คน">👤 คน</option>
@@ -763,19 +833,32 @@ h1 {
             <option value="คำทั่วไป">💬 คำทั่วไป</option>
             <option value="อื่นๆ">📁 อื่นๆ</option>
         </select>
+    </div>
+
+
+    <!-- การเรียง -->
+    <div class="filter-group sort-group">
 
         <label>🔤 เรียง</label>
-        <select id="sortOption" onchange="showLibrary()">
-            <option value="word">🇯🇵 คำศัพท์</option>
-            <option value="meaning">🇬🇧 English</option>
-            <option value="thaiMeaning">🇹🇭 ภาษาไทย</option>
-        </select>
 
-        <select id="sortOrder" onchange="showLibrary()">
-            <option value="asc">⬆️ A → Z / ก → ฮ</option>
-            <option value="desc">⬇️ Z → A / ฮ → ก</option>
-        </select>
+        <div class="sort-row">
+
+            <select id="sortOption" onchange="showLibrary()">
+                <option value="word">🇯🇵 คำศัพท์</option>
+                <option value="meaning">🇬🇧 English</option>
+                <option value="thaiMeaning">🇹🇭 ภาษาไทย</option>
+            </select>
+
+            <select id="sortOrder" onchange="showLibrary()">
+                <option value="asc">⬆️ A → Z / ก → ฮ</option>
+                <option value="desc">⬇️ Z → A / ฮ → ก</option>
+            </select>
+
+        </div>
+
     </div>
+
+</div>
 
     <div id="wordList"></div>
 
