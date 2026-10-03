@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Japan Vocab Trainer</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 30px;
+
+    font-family: Arial, "Noto Sans Thai", sans-serif;
+    color: #3f3540;
+
+    background-image:
+        linear-gradient(
+            rgba(255, 248, 252, 0.35),
+            rgba(255, 248, 252, 0.35)
+        ),
+        url("sakura-bg.png");
+
+    background-size:
+        cover,
+        cover;
+
+    background-position:
+        center,
+        center;
+
+    background-attachment:
+        fixed,
+        fixed;
+
+    background-repeat:
+        no-repeat,
+        no-repeat;
+
+    min-height: 100vh;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    padding: 10px 18px;
+    border: 0;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #fff;
+    color: #493c47;
+    box-shadow: 0 3px 12px rgba(90, 60, 80, .08);
+}
+
+button:hover {
+    transform: translateY(-1px);
+}
+
+input,
+select,
+textarea {
+    padding: 10px 12px;
+    border: 1px solid #ddd0da;
+    border-radius: 10px;
+    background: rgba(255,255,255,.95);
+    outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #c98eae;
+}
+
+h1 {
+    margin-top: 0;
+}
+
+.page {
+    background: rgba(255,255,255,.45);
+    border: 1px solid rgba(210,180,200,.35);
+    border-radius: 22px;
+    padding: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    box-shadow: 0 12px 35px rgba(100,70,100,.08);
+}
+
+/* HOME */
+#homePage {
+    text-align: center;
+    padding-top: 45px;
+    min-height: 520px;
+}
+
+#homePage h1 {
+    font-size: 38px;
+    margin-bottom: 6px;
+}
+
+#homePage h2 {
+    font-size: 18px;
+    font-weight: normal;
+    color: #806d7b;
+}
+
+.home-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    margin-top: 45px;
+}
+
+.home-buttons button {
+    width: 320px;
+    min-height: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-top: 4px solid #d99ab8;
+}
+
+.home-buttons button:nth-child(2) {
+    border-top-color: #a98bd4;
+}
+
+.home-buttons button:nth-child(3) {
+    border-top-color: #8bbf9b;
+}
+
+.home-buttons span {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.home-buttons small {
+    margin-top: 8px;
+    color: #8b7d88;
+}
+
+/* ADD */
+.add-card {
+    max-width: 650px;
+    margin: auto;
+}
+
+.add-card p {
+    margin: 13px 0 6px;
+    font-weight: bold;
+}
+
+.add-card input,
+.add-card select,
+.add-card textarea {
+    width: 100%;
+}
+
+.add-card textarea {
+    min-height: 105px;
+    resize: vertical;
+}
+
+.add-main-button {
+    width: 100%;
+    margin-top: 18px;
+    background: #f4d7e5;
+    font-weight: bold;
+}
+
+/* PRACTICE */
+.practice-layout {
+    display: grid;
+    grid-template-columns: minmax(280px, .85fr) minmax(380px, 1.15fr);
+    gap: 28px;
+    align-items: start;
+}
+
+.practice-left {
+    min-width: 0;
+}
+
+.practice-left input,
+.practice-left select {
+    width: 100%;
+    max-width: 360px;
+}
+
+.practice-left .primary {
+    background: #eadcf7;
+    font-weight: bold;
+}
+
+.question-box {
+    margin: 25px 0;
+    padding: 18px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.72);
+}
+
+#question {
+    font-size: 32px;
+    margin: 8px 0;
+}
+
+#result {
+    min-height: 28px;
+}
+
+.practice-right {
+    min-width: 0;
+}
+
+.practice-word-card {
+    width: 100%;
+    min-height: 320px;
+    padding: 28px;
+    border-radius: 22px;
+    background: rgba(255,255,255,.94);
+    border: 1px solid rgba(205,165,190,.35);
+    box-shadow: 0 10px 30px rgba(100,70,100,.10);
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.practice-word-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 35px rgba(100,70,100,.14);
+}
+
+.practice-card-empty {
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #94858f;
+}
+
+.empty-icon {
+    font-size: 56px;
+    margin-bottom: 8px;
+}
+
+.practice-card-content {
+    display: none;
+}
+
+.practice-word-card.has-word .practice-card-empty {
+    display: none;
+}
+
+.practice-word-card.has-word .practice-card-content {
+    display: block;
+}
+
+.practice-card-word {
+    text-align: center;
+    font-size: 38px;
+    margin: 0 0 2px;
+}
+
+.practice-card-reading {
+    text-align: center;
+    color: #8a7c86;
+    margin-top: 0;
+}
+
+.card-line {
+    margin: 12px 0;
+    line-height: 1.6;
+}
+
+.badge {
+    display: inline-block;
+    padding: 5px 10px;
+    margin-right: 5px;
+    border-radius: 20px;
+    background: #f5e5ee;
+    font-size: 13px;
+}
+
+.practice-card-detail {
+    display: none;
+    margin-top: 22px;
+}
+
+.practice-word-card.detail-open .practice-card-detail {
+    display: block;
+}
+
+.practice-card-detail hr {
+    border: 0;
+    border-top: 1px solid #eee1e8;
+    margin: 20px 0;
+}
+
+.practice-detail-content,
+.detail-content {
+    white-space: pre-line;
+    padding: 13px 15px;
+    border-radius: 12px;
+    background: #faf5f8;
+    line-height: 1.8;
+}
+
+.practice-card-hint {
+    text-align: center;
+    color: #9a8c96;
+    font-size: 13px;
+    margin-top: 25px;
+}
+
+.back-button {
+    margin-top: 22px;
+}
+
+/* LIBRARY */
+.library-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.65);
+}
+
+.library-toolbar label {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+#searchInput {
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.library-toolbar select {
+    padding: 7px 9px;
+    font-size: 13px;
+}
+
+#libraryLevel { width: 90px; }
+#libraryCategory { width: 120px; }
+#sortOption { width: 125px; }
+#sortOrder { width: 125px; }
+
+#wordList {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.word-card {
+    padding: 15px;
+    border: 1px solid #e4d9e1;
+    border-radius: 16px;
+    background: rgba(255,255,255,.92);
+    box-shadow: 0 4px 15px rgba(100,70,100,.06);
+    cursor: pointer;
+}
+
+.word-card:hover {
+    transform: translateY(-2px);
+}
+
+.word-card hr {
+    border: 0;
+    border-top: 1px solid #eee4ea;
+}
+
+.japanese-word {
+    font-size: 28px;
+    margin: 8px 0;
+}
+
+.word-card p {
+    margin: 6px 0;
+}
+
+.word-card button {
+    margin: 8px 7px 0 0;
+    padding: 7px 11px;
+}
+
+/* MODAL */
+.word-detail-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    padding: 20px;
+    align-items: center;
+    justify-content: center;
+    background: rgba(40,25,38,.42);
+}
+
+.word-detail-card {
+    position: relative;
+    width: 100%;
+    max-width: 650px;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 30px;
+    border-radius: 20px;
+    background: rgba(255,255,255,.98);
+    box-shadow: 0 15px 45px rgba(50,30,50,.2);
+}
+
+.close-detail {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 50%;
+}
+
+.detail-reading {
+    text-align: center;
+    color: #7f707a;
+    font-size: 18px;
+}
+
+/* responsive */
+@media (max-width: 800px) {
+    body {
+        padding: 12px;
+    }
+
+    .page {
+        padding: 16px;
+    }
+
+    .practice-layout {
+        grid-template-columns: 1fr;
+    }
+
+    #wordList {
+        grid-template-columns: 1fr;
+    }
+
+    .practice-right {
+        order: 2;
+    }
+}
+.home-title {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.title-decoration {
+    font-size: 42px;
+    margin-bottom: 8px;
+}
+
+.home-title h1 {
+    margin: 0;
+    font-size: 38px;
+    letter-spacing: 2px;
+}
+
+.home-title p {
+    margin: 8px 0 4px;
+    color: #b47796;
+    font-size: 17px;
+}
+
+.home-title h2 {
+    margin: 4px 0 15px;
+    font-size: 17px;
+    font-weight: normal;
+    color: #806d7b;
+}
+
+.title-line {
+    width: 120px;
+    height: 2px;
+    margin: 0 auto;
+    background: #d99ab8;
+    border-radius: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- หน้าหลัก -->
+<div id="homePage" class="page">
+    <div class="home-title">
+
+    <div class="title-decoration">🌸</div>
+
+    <h1>JAPAN VOCAB TRAINER</h1>
+
+    <p>日本語 単語トレーナー</p>
+
+    <h2>โปรแกรมฝึกคำศัพท์ภาษาญี่ปุ่น</h2>
+
+    <div class="title-line"></div>
+
+</div>
+
+    <div class="home-buttons">
+        <button onclick="showPage('addPage')">
+            <span>📚 เพิ่มศัพท์</span>
+            <small>เพิ่มคำศัพท์ใหม่</small>
+        </button>
+
+        <button onclick="showPage('practicePage')">
+            <span>🎲 ฝึกศัพท์</span>
+            <small>สุ่มทดสอบคำศัพท์</small>
+        </button>
+
+        <button onclick="showPage('libraryPage')">
+            <span>📖 คลังศัพท์</span>
+            <small>ดูและจัดการคำศัพท์</small>
+        </button>
+    </div>
+</div>
+
+
+<!-- หน้าเพิ่มศัพท์ -->
+<div id="addPage" class="page" style="display:none;">
+    <div class="add-card">
+        <h1>📚 เพิ่มศัพท์</h1>
+
+        <p>คำศัพท์</p>
+        <input id="wordInput" type="text">
+
+        <p>คำอ่าน</p>
+        <input id="readingInput" type="text" placeholder="เช่น たべる">
+
+        <p>ความหมายภาษาอังกฤษ</p>
+        <input id="meaningInput" type="text">
+
+        <p>ความหมายภาษาไทย</p>
+        <input id="thaiMeaningInput" type="text">
+
+        <p>📚 ตัวอย่างการใช้</p>
+        <textarea id="examplesInput"
+            placeholder="เช่น ご飯を食べます。
+กินข้าว"></textarea>
+
+        <p>🔄 รูปผัน</p>
+        <textarea id="conjugationInput"
+            placeholder="เช่น
+ます形: 食べます
+ない形: 食べない
+て形: 食べて
+た形: 食べた"></textarea>
+
+        <p>ระดับ JLPT</p>
+        <select id="levelInput">
+            <option value="N5">N5</option>
+            <option value="N4">N4</option>
+            <option value="N3">N3</option>
+            <option value="N2">N2</option>
+            <option value="N1">N1</option>
+        </select>
+
+        <p>หมวดหมู่</p>
+        <select id="categoryInput">
+            <option value="คน">👤 คน</option>
+            <option value="สัตว์">🐶 สัตว์</option>
+            <option value="พืช">🌱 พืช</option>
+            <option value="สิ่งของ">📦 สิ่งของ</option>
+            <option value="อาหาร">🍚 อาหาร</option>
+            <option value="สถานที่">🏠 สถานที่</option>
+            <option value="งาน/อาชีพ">💼 งาน/อาชีพ</option>
+            <option value="การกระทำ">🏃 การกระทำ</option>
+            <option value="ความรู้สึก">😊 ความรู้สึก</option>
+            <option value="ธรรมชาติ">🌤️ ธรรมชาติ</option>
+            <option value="เวลา">🕐 เวลา</option>
+            <option value="จำนวน/ตัวเลข">🔢 จำนวน/ตัวเลข</option>
+            <option value="คำทั่วไป">💬 คำทั่วไป</option>
+            <option value="อื่นๆ">📁 อื่นๆ</option>
+        </select>
+
+        <button class="add-main-button" onclick="addWord()">＋ เพิ่มคำศัพท์</button>
+        <button class="back-button" onclick="showPage('homePage')">← กลับหน้าหลัก</button>
+    </div>
+</div>
+
+
+<!-- หน้าฝึกศัพท์ -->
+<div id="practicePage" class="page" style="display:none;">
+    <div class="practice-layout">
+
+        <div class="practice-left">
+            <h1>🎲 ฝึกศัพท์</h1>
+
+            <p>เลือกระดับ</p>
+            <select id="practiceLevel">
+                <option value="N5">N5</option>
+                <option value="N4">N4</option>
+                <option value="N3">N3</option>
+                <option value="N2">N2</option>
+                <option value="N1">N1</option>
+            </select>
+
+            <br><br>
+
+            <button class="primary" onclick="randomWord()">🎲 สุ่มคำศัพท์</button>
+
+            <div class="question-box">
+                <h2 id="question">กดสุ่มเพื่อเริ่ม</h2>
+                <p>คำนี้แปลว่าอะไร?</p>
+                <input id="answerInput" type="text">
+                <br><br>
+                <button onclick="checkAnswer()">ตรวจคำตอบ</button>
+                <h3 id="result"></h3>
+                <p id="score">คะแนน: 0</p>
+            </div>
+
+            <button class="back-button" onclick="showPage('homePage')">
+                ← กลับหน้าหลัก
+            </button>
+        </div>
+
+
+        <div class="practice-right">
+            <div id="practiceWordCard" class="practice-word-card">
+
+                <div id="practiceCardEmpty" class="practice-card-empty">
+                    <div class="empty-icon">📖</div>
+                    <h2>พร้อมฝึกศัพท์แล้ว</h2>
+                    <p>กด 🎲 สุ่มคำศัพท์<br>เพื่อเริ่มฝึก</p>
+                </div>
+
+                <div id="practiceCardContent" class="practice-card-content">
+                    <h2 id="practiceCardWord" class="practice-card-word"></h2>
+                    <p id="practiceCardReading" class="practice-card-reading"></p>
+
+                    <p class="card-line"> English:
+                        <span id="practiceCardMeaning"></span>
+                    </p>
+
+                    <p class="card-line"> Thai:
+                        <span id="practiceCardThai"></span>
+                    </p>
+
+                    <p>
+                        <span id="practiceCardLevel" class="badge"></span>
+                        <span id="practiceCardCategory" class="badge"></span>
+                    </p>
+
+                    <div id="practiceCardDetail" class="practice-card-detail">
+                        <hr>
+
+                        <h3>📚 ตัวอย่างการใช้</h3>
+                        <div id="practiceCardExamples"
+                             class="practice-detail-content"></div>
+
+                        <h3>🔄 รูปผัน</h3>
+                        <div id="practiceCardConjugation"
+                             class="practice-detail-content"></div>
+                    </div>
+
+                    <p id="practiceCardHint" class="practice-card-hint">
+                        👆 กดการ์ดเพื่อดูรายละเอียด
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- หน้าคลังศัพท์ -->
+<div id="libraryPage" class="page" style="display:none;">
+    <h1>📖 คลังศัพท์</h1>
+
+    <p>🔎 ค้นหาศัพท์</p>
+    <input id="searchInput" type="text"
+           placeholder="พิมพ์คำศัพท์หรือความหมาย..."
+           oninput="showLibrary()">
+
+    <div class="library-toolbar">
+        <label>📚 ระดับ</label>
+        <select id="libraryLevel" onchange="showLibrary()">
+            <option value="ALL">ทั้งหมด</option>
+            <option value="N5">N5</option>
+            <option value="N4">N4</option>
+            <option value="N3">N3</option>
+            <option value="N2">N2</option>
+            <option value="N1">N1</option>
+        </select>
+
+        <label>🏷️ หมวด</label>
+        <select id="libraryCategory" onchange="showLibrary()">
+            <option value="ALL">ทั้งหมด</option>
+            <option value="คน">👤 คน</option>
+            <option value="สัตว์">🐶 สัตว์</option>
+            <option value="พืช">🌱 พืช</option>
+            <option value="สิ่งของ">📦 สิ่งของ</option>
+            <option value="อาหาร">🍚 อาหาร</option>
+            <option value="สถานที่">🏠 สถานที่</option>
+            <option value="งาน/อาชีพ">💼 งาน/อาชีพ</option>
+            <option value="การกระทำ">🏃 การกระทำ</option>
+            <option value="ความรู้สึก">😊 ความรู้สึก</option>
+            <option value="ธรรมชาติ">🌤️ ธรรมชาติ</option>
+            <option value="เวลา">🕐 เวลา</option>
+            <option value="จำนวน/ตัวเลข">🔢 จำนวน/ตัวเลข</option>
+            <option value="คำทั่วไป">💬 คำทั่วไป</option>
+            <option value="อื่นๆ">📁 อื่นๆ</option>
+        </select>
+
+        <label>🔤 เรียง</label>
+        <select id="sortOption" onchange="showLibrary()">
+            <option value="word">🇯🇵 คำศัพท์</option>
+            <option value="meaning">🇬🇧 English</option>
+            <option value="thaiMeaning">🇹🇭 ภาษาไทย</option>
+        </select>
+
+        <select id="sortOrder" onchange="showLibrary()">
+            <option value="asc">⬆️ A → Z / ก → ฮ</option>
+            <option value="desc">⬇️ Z → A / ฮ → ก</option>
+        </select>
+    </div>
+
+    <div id="wordList"></div>
+
+    <button class="back-button" onclick="showPage('homePage')">
+        ← กลับหน้าหลัก
+    </button>
+</div>
+
+
+<!-- Modal รายละเอียดศัพท์ในคลัง -->
+<div id="wordDetailModal" class="word-detail-modal">
+    <div class="word-detail-card">
+
+        <button class="close-detail" onclick="closeWordDetail()">✕</button>
+
+        <h1 id="detailWord"></h1>
+        <p id="detailReading" class="detail-reading"></p>
+
+        <p>🇬🇧 English: <span id="detailMeaning"></span></p>
+        <p>🇹🇭 Thai: <span id="detailThaiMeaning"></span></p>
+
+        <hr>
+
+        <h2>📚 ตัวอย่างการใช้</h2>
+        <div id="detailExamples" class="detail-content"></div>
+
+        <hr>
+
+        <h2>🔄 รูปผัน</h2>
+        <div id="detailConjugation" class="detail-content"></div>
+
+        <br>
+        <button onclick="closeWordDetail()">← ปิด</button>
+    </div>
+</div>
+
+
+<script>
+/* =========================
+   DATA
+========================= */
+
+let vocabulary =
+    JSON.parse(localStorage.getItem("vocabulary")) || [];
+
+let currentWord = null;
+let score = 0;
+
+/* แยกประวัติการสุ่มตามระดับ */
+let usedWords = {
+    N5: [],
+    N4: [],
+    N3: [],
+    N2: [],
+    N1: []
+};
+
+
+/* =========================
+   PAGE
+========================= */
+
+function showPage(pageId) {
+
+    document.getElementById("homePage").style.display = "none";
+    document.getElementById("addPage").style.display = "none";
+    document.getElementById("practicePage").style.display = "none";
+    document.getElementById("libraryPage").style.display = "none";
+
+    closeWordDetail();
+
+    if (pageId === "homePage") {
+        resetPractice();
+    }
+
+    document.getElementById(pageId).style.display = "block";
+
+    if (pageId === "libraryPage") {
+        showLibrary();
+    }
+}
+
+
+/* =========================
+   RESET PRACTICE
+========================= */
+
+function resetPractice() {
+
+    currentWord = null;
+    score = 0;
+
+    usedWords = {
+        N5: [],
+        N4: [],
+        N3: [],
+        N2: [],
+        N1: []
+    };
+
+    document.getElementById("question").innerText =
+        "กดสุ่มเพื่อเริ่ม";
+
+    document.getElementById("answerInput").value = "";
+    document.getElementById("result").innerText = "";
+    document.getElementById("score").innerText = "คะแนน: 0";
+
+    let card = document.getElementById("practiceWordCard");
+
+    card.classList.remove("has-word");
+    card.classList.remove("detail-open");
+
+    document.getElementById("practiceCardWord").innerText = "";
+    document.getElementById("practiceCardReading").innerText = "";
+    document.getElementById("practiceCardMeaning").innerText = "";
+    document.getElementById("practiceCardThai").innerText = "";
+    document.getElementById("practiceCardLevel").innerText = "";
+    document.getElementById("practiceCardCategory").innerText = "";
+    document.getElementById("practiceCardExamples").innerText = "";
+    document.getElementById("practiceCardConjugation").innerText = "";
+
+    document.getElementById("practiceCardHint").innerText =
+        "👆 กดการ์ดเพื่อดูรายละเอียด";
+}
+
+
+/* =========================
+   ADD WORD
+========================= */
+
+function addWord() {
+
+    let word =
+        document.getElementById("wordInput").value.trim();
+
+    let reading =
+        document.getElementById("readingInput").value.trim();
+
+    let meaning =
+        document.getElementById("meaningInput").value.trim();
+
+    let thaiMeaning =
+        document.getElementById("thaiMeaningInput").value.trim();
+
+    let examples =
+        document.getElementById("examplesInput").value.trim();
+
+    let conjugation =
+        document.getElementById("conjugationInput").value.trim();
+
+    let level =
+        document.getElementById("levelInput").value;
+
+    let category =
+        document.getElementById("categoryInput").value;
+
+
+    if (word === "" || meaning === "" || thaiMeaning === "") {
+        alert("กรุณาใส่คำศัพท์ English และความหมายไทย");
+        return;
+    }
+
+
+    vocabulary.push({
+        word: word,
+        reading: reading,
+        meaning: meaning,
+        thaiMeaning: thaiMeaning,
+        level: level,
+        category: category,
+        examples: examples,
+        conjugation: conjugation
+    });
+
+
+    localStorage.setItem(
+        "vocabulary",
+        JSON.stringify(vocabulary)
+    );
+
+
+    document.getElementById("wordInput").value = "";
+    document.getElementById("readingInput").value = "";
+    document.getElementById("meaningInput").value = "";
+    document.getElementById("thaiMeaningInput").value = "";
+    document.getElementById("examplesInput").value = "";
+    document.getElementById("conjugationInput").value = "";
+
+
+    alert("เพิ่มคำศัพท์แล้ว!");
+}
+
+
+/* =========================
+   RANDOM WORD
+========================= */
+
+function randomWord() {
+
+    let selectedLevel =
+        document.getElementById("practiceLevel").value;
+
+    let filteredVocabulary =
+        vocabulary.filter(function(item) {
+            return item.level === selectedLevel;
+        });
+
+
+    if (filteredVocabulary.length === 0) {
+        alert("ยังไม่มีคำศัพท์ระดับ " + selectedLevel);
+        return;
+    }
+
+
+    let usedForLevel = usedWords[selectedLevel] || [];
+
+
+    let availableWords =
+        filteredVocabulary.filter(function(item) {
+            return !usedForLevel.includes(item);
+        });
+
+
+    if (availableWords.length === 0) {
+
+        alert(
+            "🎉 สุ่มครบทุกคำในระดับ " +
+            selectedLevel +
+            " แล้ว! เริ่มรอบใหม่"
+        );
+
+        usedWords[selectedLevel] = [];
+        usedForLevel = [];
+
+        availableWords = filteredVocabulary;
+    }
+
+
+    let randomIndex =
+        Math.floor(Math.random() * availableWords.length);
+
+    currentWord = availableWords[randomIndex];
+
+    usedWords[selectedLevel].push(currentWord);
+
+
+    document.getElementById("question").innerText =
+        currentWord.word;
+
+    document.getElementById("answerInput").value = "";
+    document.getElementById("result").innerText = "";
+
+
+    /* ซ่อนรายละเอียดเก่า แต่ยังไม่แสดง Card จนกว่าจะตรวจ */
+    let card = document.getElementById("practiceWordCard");
+
+    card.classList.remove("has-word");
+    card.classList.remove("detail-open");
+}
+
+
+/* =========================
+   CHECK ANSWER
+========================= */
+
+function checkAnswer() {
+
+    if (currentWord === null) {
+        alert("กรุณาสุ่มคำศัพท์ก่อน");
+        return;
+    }
+
+
+    let answer =
+        document.getElementById("answerInput").value.trim();
+
+
+    let isCorrect =
+        answer.toLowerCase() ===
+        (currentWord.meaning || "").toLowerCase()
+        ||
+        answer === currentWord.thaiMeaning;
+
+
+    if (isCorrect) {
+
+        document.getElementById("result").innerText =
+            "✅ ถูกต้อง!";
+
+        score++;
+
+    } else {
+
+        document.getElementById("result").innerText =
+            "❌ ยังไม่ถูก — คำตอบคือ " +
+            currentWord.meaning;
+    }
+
+
+    document.getElementById("score").innerText =
+        "คะแนน: " + score;
+
+
+    /* ใส่ข้อมูลลง Card */
+    document.getElementById("practiceCardWord").innerText =
+        currentWord.word;
+
+    document.getElementById("practiceCardReading").innerText =
+        currentWord.reading || "ยังไม่มีคำอ่าน";
+
+    document.getElementById("practiceCardMeaning").innerText =
+        currentWord.meaning || "ยังไม่มี";
+
+    document.getElementById("practiceCardThai").innerText =
+        currentWord.thaiMeaning || "ยังไม่มี";
+
+    document.getElementById("practiceCardLevel").innerText =
+        currentWord.level || "";
+
+    document.getElementById("practiceCardCategory").innerText =
+        getCategoryIcon(currentWord.category) +
+        " " +
+        (currentWord.category || "ยังไม่ได้จัดหมวดหมู่");
+
+    document.getElementById("practiceCardExamples").innerText =
+        currentWord.examples || "ยังไม่มีตัวอย่างการใช้";
+
+    document.getElementById("practiceCardConjugation").innerText =
+        currentWord.conjugation || "ไม่มีข้อมูลรูปผัน";
+
+
+    let card = document.getElementById("practiceWordCard");
+
+    card.classList.add("has-word");
+    card.classList.remove("detail-open");
+
+    document.getElementById("practiceCardHint").innerText =
+        "👆 กดการ์ดเพื่อดูรายละเอียด";
+}
+
+
+/* =========================
+   PRACTICE CARD CLICK
+========================= */
+
+document.getElementById("practiceWordCard").onclick =
+    function() {
+
+        if (currentWord === null) {
+            return;
+        }
+
+        let card = document.getElementById("practiceWordCard");
+
+        if (card.classList.contains("detail-open")) {
+
+            card.classList.remove("detail-open");
+
+            document.getElementById("practiceCardHint").innerText =
+                "👆 กดการ์ดเพื่อดูรายละเอียด";
+
+        } else {
+
+            card.classList.add("detail-open");
+
+            document.getElementById("practiceCardHint").innerText =
+                "👆 กดการ์ดเพื่อซ่อนรายละเอียด";
+        }
+    };
+
+
+/* =========================
+   CATEGORY ICON
+========================= */
+
+function getCategoryIcon(category) {
+
+    let icons = {
+        "คน": "👤",
+        "สัตว์": "🐶",
+        "พืช": "🌱",
+        "สิ่งของ": "📦",
+        "อาหาร": "🍚",
+        "สถานที่": "🏠",
+        "งาน/อาชีพ": "💼",
+        "การกระทำ": "🏃",
+        "ความรู้สึก": "😊",
+        "ธรรมชาติ": "🌤️",
+        "เวลา": "🕐",
+        "จำนวน/ตัวเลข": "🔢",
+        "คำทั่วไป": "💬",
+        "อื่นๆ": "📁"
+    };
+
+    return icons[category] || "📁";
+}
+
+
+/* =========================
+   LIBRARY DETAIL MODAL
+========================= */
+
+function showWordDetail(index) {
+
+    let item = vocabulary[index];
+
+    if (!item) {
+        return;
+    }
+
+    document.getElementById("detailWord").innerText =
+        item.word;
+
+    document.getElementById("detailReading").innerText =
+        item.reading || "ยังไม่มีคำอ่าน";
+
+    document.getElementById("detailMeaning").innerText =
+        item.meaning || "ยังไม่มี";
+
+    document.getElementById("detailThaiMeaning").innerText =
+        item.thaiMeaning || "ยังไม่มี";
+
+    document.getElementById("detailExamples").innerText =
+        item.examples || "ยังไม่มีตัวอย่างการใช้";
+
+    document.getElementById("detailConjugation").innerText =
+        item.conjugation || "ไม่มีข้อมูลรูปผัน";
+
+    document.getElementById("wordDetailModal").style.display =
+        "flex";
+}
+
+
+function closeWordDetail() {
+
+    document.getElementById("wordDetailModal").style.display =
+        "none";
+}
+
+
+/* =========================
+   LIBRARY
+========================= */
+
+function showLibrary() {
+
+    let selectedLevel =
+        document.getElementById("libraryLevel").value;
+
+    let selectedCategory =
+        document.getElementById("libraryCategory").value;
+
+    let sortOption =
+        document.getElementById("sortOption").value;
+
+    let sortOrder =
+        document.getElementById("sortOrder").value;
+
+    let searchText =
+        document.getElementById("searchInput").value
+            .trim()
+            .toLowerCase();
+
+    let wordList =
+        document.getElementById("wordList");
+
+    wordList.innerHTML = "";
+
+
+    let filteredVocabulary =
+        vocabulary.filter(function(item) {
+
+            let levelMatch =
+                selectedLevel === "ALL" ||
+                item.level === selectedLevel;
+
+            let categoryMatch =
+                selectedCategory === "ALL" ||
+                item.category === selectedCategory;
+
+            let searchMatch =
+                (item.word || "").toLowerCase().includes(searchText) ||
+                (item.meaning || "").toLowerCase().includes(searchText) ||
+                (item.thaiMeaning || "").toLowerCase().includes(searchText);
+
+            return levelMatch &&
+                   categoryMatch &&
+                   searchMatch;
+        });
+
+
+    filteredVocabulary.sort(function(a, b) {
+
+        let valueA =
+            (a[sortOption] || "").toLowerCase();
+
+        let valueB =
+            (b[sortOption] || "").toLowerCase();
+
+        let result =
+            valueA.localeCompare(valueB, "th");
+
+        return sortOrder === "desc" ? -result : result;
+    });
+
+
+    if (filteredVocabulary.length === 0) {
+
+        wordList.innerText =
+            "ยังไม่มีคำศัพท์";
+
+        return;
+    }
+
+
+    filteredVocabulary.forEach(function(item) {
+
+        let realIndex =
+            vocabulary.indexOf(item);
+
+        let wordDiv =
+            document.createElement("div");
+
+        wordDiv.className = "word-card";
+
+        wordDiv.onclick = function() {
+            showWordDetail(realIndex);
+        };
+
+
+        wordDiv.innerHTML =
+            "<hr>" +
+
+            "<h3 class='japanese-word'>" +
+            escapeHTML(item.word) +
+            "</h3>" +
+
+            "<p>🇬🇧 English: " +
+            escapeHTML(item.meaning || "ยังไม่มี") +
+            "</p>" +
+
+            "<p>🇹🇭 Thai: " +
+            escapeHTML(item.thaiMeaning || "ยังไม่มี") +
+            "</p>" +
+
+            "<p>" +
+            "<span class='badge'>" +
+            escapeHTML(item.level || "") +
+            "</span> " +
+
+            "<span class='badge'>" +
+            getCategoryIcon(item.category) +
+            " " +
+            escapeHTML(item.category || "ยังไม่ได้จัดหมวดหมู่") +
+            "</span>" +
+            "</p>" +
+
+            "<button onclick='event.stopPropagation(); editWord(" +
+            realIndex +
+            ")'>✏️ แก้ไข</button>" +
+
+            "<button onclick='event.stopPropagation(); deleteWord(" +
+            realIndex +
+            ")'>🗑️ ลบ</button>";
+
+
+        wordList.appendChild(wordDiv);
+    });
+}
+
+
+/* ป้องกัน HTML จากข้อมูลที่ผู้ใช้กรอก */
+function escapeHTML(value) {
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* =========================
+   EDIT WORD
+========================= */
+
+function editWord(index) {
+
+    let item = vocabulary[index];
+
+    if (!item) {
+        return;
+    }
+
+
+    let newWord =
+        prompt("คำศัพท์:", item.word);
+
+    if (newWord === null) return;
+
+
+    let newReading =
+        prompt("คำอ่าน:", item.reading || "");
+
+    if (newReading === null) return;
+
+
+    let newMeaning =
+        prompt("English:", item.meaning);
+
+    if (newMeaning === null) return;
+
+
+    let newThai =
+        prompt("ไทย:", item.thaiMeaning || "");
+
+    if (newThai === null) return;
+
+
+    let newExamples =
+        prompt("ตัวอย่างการใช้:", item.examples || "");
+
+    if (newExamples === null) return;
+
+
+    let newConjugation =
+        prompt("รูปผัน:", item.conjugation || "");
+
+    if (newConjugation === null) return;
+
+
+    let newLevel =
+        prompt("ระดับ JLPT:", item.level);
+
+    if (newLevel === null) return;
+
+
+    let newCategory =
+        prompt("หมวดหมู่:", item.category || "");
+
+    if (newCategory === null) return;
+
+
+    item.word = newWord.trim();
+    item.reading = newReading.trim();
+    item.meaning = newMeaning.trim();
+    item.thaiMeaning = newThai.trim();
+    item.examples = newExamples.trim();
+    item.conjugation = newConjugation.trim();
+    item.level = newLevel.trim().toUpperCase();
+    item.category = newCategory.trim();
+
+
+    localStorage.setItem(
+        "vocabulary",
+        JSON.stringify(vocabulary)
+    );
+
+
+    showLibrary();
+}
+
+
+/* =========================
+   DELETE WORD
+========================= */
+
+function deleteWord(index) {
+
+    let item = vocabulary[index];
+
+    if (!item) {
+        return;
+    }
+
+
+    let confirmDelete =
+        confirm(
+            "ต้องการลบคำว่า " +
+            item.word +
+            " ใช่ไหม?"
+        );
+
+
+    if (!confirmDelete) {
+        return;
+    }
+
+
+    vocabulary.splice(index, 1);
+
+
+    localStorage.setItem(
+        "vocabulary",
+        JSON.stringify(vocabulary)
+    );
+
+
+    showLibrary();
+}
+
+
+/* เปิดหน้าเริ่มต้น */
+showPage("homePage");
+
+</script>
+
+</body>
+</html>
