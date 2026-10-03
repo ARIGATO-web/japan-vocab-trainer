@@ -766,19 +766,51 @@ h1 {
         <br>
         <button onclick="closeWordDetail()">← ปิด</button>
     </div>
-</div>
 
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* =========================
    DATA
 ========================= */
+const SUPABASE_URL = "https://gvlobrfsfaabwmfmrxrp.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_cCxxWEECgUPLuJemAYZtWg_MMQSymch";
 
-let vocabulary =
-    JSON.parse(localStorage.getItem("vocabulary")) || [];
+    const supabaseClient = supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+let vocabulary = [];
 
 let currentWord = null;
+
 let score = 0;
+
+async function loadVocabulary() {
+
+    const { data, error } = await supabaseClient
+        .from("Vocab")
+        .select("*")
+        .order("id", { ascending: true });
+
+    if (error) {
+        console.error("โหลดคำศัพท์ไม่สำเร็จ:", error);
+        return;
+    }
+
+    vocabulary = (data || []).map(item => ({
+        id: item.id,
+        word: item.Japanese,
+        reading: item.reading,
+        meaning: item.english,
+        thaiMeaning: item.thai,
+        level: item.level,
+        category: item.category,
+        examples: item.example,
+        conjugation: item.conjugation || ""
+    }));
+
+    console.log("โหลดคำศัพท์จาก Supabase:", vocabulary);
+}
 
 /* แยกประวัติการสุ่มตามระดับ */
 let usedWords = {
@@ -862,7 +894,7 @@ function resetPractice() {
    ADD WORD
 ========================= */
 
-function addWord() {
+async function addWord() {
 
     let word =
         document.getElementById("wordInput").value.trim();
@@ -895,22 +927,40 @@ function addWord() {
     }
 
 
+    const { data, error } = await supabaseClient
+        .from("Vocab")
+        .insert({
+            Japanese: word,
+            reading: reading,
+            english: meaning,
+            thai: thaiMeaning,
+            level: level,
+            category: category,
+            example: examples,
+            conjugation: conjugation
+        })
+        .select()
+        .single();
+
+
+    if (error) {
+        console.error("เพิ่มคำศัพท์ไม่สำเร็จ:", error);
+        alert("เพิ่มคำศัพท์ไม่สำเร็จ\n" + error.message);
+        return;
+    }
+
+
     vocabulary.push({
-        word: word,
-        reading: reading,
-        meaning: meaning,
-        thaiMeaning: thaiMeaning,
-        level: level,
-        category: category,
-        examples: examples,
-        conjugation: conjugation
+        id: data.id,
+        word: data.Japanese,
+        reading: data.reading,
+        meaning: data.english,
+        thaiMeaning: data.thai,
+        level: data.level,
+        category: data.category,
+        examples: data.example,
+        conjugation: data.conjugation || ""
     });
-
-
-    localStorage.setItem(
-        "vocabulary",
-        JSON.stringify(vocabulary)
-    );
 
 
     document.getElementById("wordInput").value = "";
@@ -1319,7 +1369,7 @@ function escapeHTML(value) {
    EDIT WORD
 ========================= */
 
-function editWord(index) {
+async function editWord(index) {
 
     let item = vocabulary[index];
 
@@ -1327,48 +1377,40 @@ function editWord(index) {
         return;
     }
 
-
     let newWord =
         prompt("คำศัพท์:", item.word);
 
     if (newWord === null) return;
-
 
     let newReading =
         prompt("คำอ่าน:", item.reading || "");
 
     if (newReading === null) return;
 
-
     let newMeaning =
         prompt("English:", item.meaning);
 
     if (newMeaning === null) return;
-
 
     let newThai =
         prompt("ไทย:", item.thaiMeaning || "");
 
     if (newThai === null) return;
 
-
     let newExamples =
         prompt("ตัวอย่างการใช้:", item.examples || "");
 
     if (newExamples === null) return;
-
 
     let newConjugation =
         prompt("รูปผัน:", item.conjugation || "");
 
     if (newConjugation === null) return;
 
-
     let newLevel =
         prompt("ระดับ JLPT:", item.level);
 
     if (newLevel === null) return;
-
 
     let newCategory =
         prompt("หมวดหมู่:", item.category || "");
@@ -1376,20 +1418,38 @@ function editWord(index) {
     if (newCategory === null) return;
 
 
-    item.word = newWord.trim();
-    item.reading = newReading.trim();
-    item.meaning = newMeaning.trim();
-    item.thaiMeaning = newThai.trim();
-    item.examples = newExamples.trim();
-    item.conjugation = newConjugation.trim();
-    item.level = newLevel.trim().toUpperCase();
-    item.category = newCategory.trim();
+    const { data, error } = await supabaseClient
+        .from("Vocab")
+        .update({
+            Japanese: newWord.trim(),
+            reading: newReading.trim(),
+            english: newMeaning.trim(),
+            thai: newThai.trim(),
+            example: newExamples.trim(),
+            conjugation: newConjugation.trim(),
+            level: newLevel.trim().toUpperCase(),
+            category: newCategory.trim()
+        })
+        .eq("id", item.id)
+        .select()
+        .single();
 
 
-    localStorage.setItem(
-        "vocabulary",
-        JSON.stringify(vocabulary)
-    );
+    if (error) {
+        console.error("แก้ไขคำศัพท์ไม่สำเร็จ:", error);
+        alert("แก้ไขคำศัพท์ไม่สำเร็จ\n" + error.message);
+        return;
+    }
+
+
+    item.word = data.Japanese;
+    item.reading = data.reading;
+    item.meaning = data.english;
+    item.thaiMeaning = data.thai;
+    item.examples = data.example;
+    item.conjugation = data.conjugation || "";
+    item.level = data.level;
+    item.category = data.category;
 
 
     showLibrary();
@@ -1400,7 +1460,7 @@ function editWord(index) {
    DELETE WORD
 ========================= */
 
-function deleteWord(index) {
+async function deleteWord(index) {
 
     let item = vocabulary[index];
 
@@ -1422,14 +1482,20 @@ function deleteWord(index) {
     }
 
 
+    const { error } = await supabaseClient
+        .from("Vocab")
+        .delete()
+        .eq("id", item.id);
+
+
+    if (error) {
+        console.error("ลบคำศัพท์ไม่สำเร็จ:", error);
+        alert("ลบคำศัพท์ไม่สำเร็จ\n" + error.message);
+        return;
+    }
+
+
     vocabulary.splice(index, 1);
-
-
-    localStorage.setItem(
-        "vocabulary",
-        JSON.stringify(vocabulary)
-    );
-
 
     showLibrary();
 }
@@ -1437,6 +1503,7 @@ function deleteWord(index) {
 
 /* เปิดหน้าเริ่มต้น */
 showPage("homePage");
+loadVocabulary();
 
 </script>
 
