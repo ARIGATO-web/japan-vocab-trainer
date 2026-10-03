@@ -515,7 +515,7 @@ h1 {
 </div>
 
     <div class="home-buttons">
-        <button onclick="showPage('addPage')">
+        <button id="adminAddButton" onclick="showPage('addPage')" style="display:none;">
             <span>📚 เพิ่มศัพท์</span>
             <small>เพิ่มคำศัพท์ใหม่</small>
         </button>
@@ -529,9 +529,53 @@ h1 {
             <span>📖 คลังศัพท์</span>
             <small>ดูและจัดการคำศัพท์</small>
         </button>
+
+        <button id="adminLoginButton" onclick="showPage('loginPage')">
+            <span>🔐 Admin</span>
+            <small>เข้าสู่ระบบผู้ดูแล</small>
+        </button>
+        <button id="logoutButton" onclick="adminLogout()" style="display:none;">
+            <span>🚪 Logout</span>
+            <small>ออกจากระบบผู้ดูแล</small>
+        </button>
+
+    </div>
+   </div> 
+
+<!-- หน้า Admin Login -->
+<div id="loginPage" class="page" style="display:none;">
+
+    <div class="add-card">
+
+        <h1>🔐 Admin Login</h1>
+
+        <p>อีเมล</p>
+        <input
+            id="loginEmail"
+            type="email"
+            placeholder="Admin Email"
+        >
+
+        <p>รหัสผ่าน</p>
+        <input
+            id="loginPassword"
+            type="password"
+            placeholder="Password"
+        >
+
+        <button
+            class="add-main-button"
+            onclick="adminLogin()">
+            🔐 เข้าสู่ระบบ
+        </button>
+
+        <button
+            class="back-button"
+            onclick="showPage('homePage')">
+            ← กลับหน้าหลัก
+        </button>
     </div>
 </div>
-
 
 <!-- หน้าเพิ่มศัพท์ -->
 <div id="addPage" class="page" style="display:none;">
@@ -785,6 +829,8 @@ let currentWord = null;
 
 let score = 0;
 
+let isAdmin = false;
+
 async function loadVocabulary() {
 
     const { data, error } = await supabaseClient
@@ -832,7 +878,8 @@ function showPage(pageId) {
     document.getElementById("addPage").style.display = "none";
     document.getElementById("practicePage").style.display = "none";
     document.getElementById("libraryPage").style.display = "none";
-
+    document.getElementById("loginPage").style.display = "none";
+    
     closeWordDetail();
 
     if (pageId === "homePage") {
@@ -926,7 +973,6 @@ async function addWord() {
         return;
     }
 
-
     const { data, error } = await supabaseClient
         .from("Vocab")
         .insert({
@@ -974,7 +1020,78 @@ async function addWord() {
     alert("เพิ่มคำศัพท์แล้ว!");
 }
 
+async function adminLogin() {
 
+    const email =
+        document.getElementById("loginEmail").value.trim();
+
+    const password =
+        document.getElementById("loginPassword").value;
+
+    if (email === "" || password === "") {
+        alert("กรุณากรอกอีเมลและรหัสผ่าน");
+        return;
+    }
+
+    const { data, error } =
+        await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+
+    if (error) {
+        console.error("Login error:", error);
+        alert("เข้าสู่ระบบไม่สำเร็จ\n" + error.message);
+        return;
+    }
+
+    alert("เข้าสู่ระบบสำเร็จ!");
+
+    console.log("Admin:", data.user);
+
+    isAdmin = true;
+
+    updateAdminUI();
+
+    showPage("homePage");
+}
+    function updateAdminUI() {
+
+    const addButton = document.getElementById("adminAddButton");
+    const adminButton = document.getElementById("adminLoginButton");
+    const logoutButton = document.getElementById("logoutButton");   
+
+    if (addButton) {
+    addButton.style.display = isAdmin ? "" : "none";
+    }
+
+    if (adminButton) {
+        adminButton.style.display = isAdmin ? "none" : "block";
+    }
+    
+    if (logoutButton) {
+    logoutButton.style.display = isAdmin ? "" : "none";
+    }
+}    
+
+async function adminLogout() {
+
+    const { error } = await supabaseClient.auth.signOut();
+
+    if (error) {
+        console.error("Logout error:", error);
+        alert("ออกจากระบบไม่สำเร็จ");
+        return;
+    }
+
+    isAdmin = false;
+
+    updateAdminUI();
+
+    showPage("homePage");
+
+    alert("ออกจากระบบแล้ว");
+}
 /* =========================
    RANDOM WORD
 ========================= */
@@ -1339,14 +1456,15 @@ function showLibrary() {
             "</span>" +
             "</p>" +
 
+            (isAdmin ? 
             "<button onclick='event.stopPropagation(); editWord(" +
             realIndex +
             ")'>✏️ แก้ไข</button>" +
 
             "<button onclick='event.stopPropagation(); deleteWord(" +
             realIndex +
-            ")'>🗑️ ลบ</button>";
-
+            ")'>🗑️ ลบ</button>"
+            : "");
 
         wordList.appendChild(wordDiv);
     });
@@ -1504,6 +1622,18 @@ async function deleteWord(index) {
 /* เปิดหน้าเริ่มต้น */
 showPage("homePage");
 loadVocabulary();
+
+supabaseClient.auth.getSession().then(({ data }) => {
+
+    if (data.session) {
+        isAdmin = true;
+    } else {
+        isAdmin = false;
+    }
+
+    updateAdminUI();
+
+});
 
 </script>
 
