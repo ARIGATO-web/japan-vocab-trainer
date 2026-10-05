@@ -725,11 +725,31 @@ h1 {
 
             <p>เลือกระดับ</p>
             <select id="practiceLevel">
+                <option value="ALL">ทั้งหมด</option>
                 <option value="N5">N5</option>
                 <option value="N4">N4</option>
                 <option value="N3">N3</option>
                 <option value="N2">N2</option>
                 <option value="N1">N1</option>
+            </select>
+
+            <p>หมวดหมู่</p>
+            <select id="practiceCategory">
+                <option value="ALL">ทั้งหมด</option>
+                <option value="คน">👤 คน</option>
+                <option value="สัตว์">🐶 สัตว์</option>
+                <option value="พืช">🌱 พืช</option>
+                <option value="สิ่งของ">📦 สิ่งของ</option>
+                <option value="อาหาร">🍚 อาหาร</option>
+                <option value="สถานที่">🏠 สถานที่</option>
+                <option value="งาน/อาชีพ">💼 งาน/อาชีพ</option>
+                <option value="การกระทำ">🏃 การกระทำ</option>
+                <option value="ความรู้สึก">😊 ความรู้สึก</option>
+                <option value="ธรรมชาติ">🌤️ ธรรมชาติ</option>
+                <option value="เวลา">🕐 เวลา</option>
+                <option value="จำนวน/ตัวเลข">🔢 จำนวน/ตัวเลข</option>
+                <option value="คำทั่วไป">💬 คำทั่วไป</option>
+                <option value="อื่นๆ">📁 อื่นๆ</option>
             </select>
 
             <br><br>
@@ -1198,12 +1218,24 @@ async function adminLogout() {
 function randomWord() {
 
     let selectedLevel =
-        document.getElementById("practiceLevel").value;
+    document.getElementById("practiceLevel").value;
+
+    let selectedCategory =
+        document.getElementById("practiceCategory").value;
 
     let filteredVocabulary =
         vocabulary.filter(function(item) {
-            return item.level === selectedLevel;
-        });
+
+        let levelMatch =
+            selectedLevel === "ALL" ||
+            item.level === selectedLevel;
+
+        let categoryMatch =
+            selectedCategory === "ALL" ||
+            item.category === selectedCategory;
+
+        return levelMatch && categoryMatch;
+    });
 
 
     if (filteredVocabulary.length === 0) {
