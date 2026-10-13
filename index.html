@@ -207,10 +207,28 @@ h1 {
     background: rgba(255,255,255,.72);
 }
 
+
 #question {
-    font-size: 32px;
     margin: 8px 0;
+    text-align: left;
 }
+
+#questionWord {
+    font-size: 36px;
+    font-weight: bold;
+    line-height: 1.4;
+    color: #49344f;
+}
+
+#questionReading {
+    font-size: 20px;
+    font-weight: normal;
+    line-height: 1.5;
+    color: #9a8497;
+    margin-top: 2px;
+}
+
+
 
 #result {
     min-height: 28px;
@@ -471,6 +489,13 @@ h1 {
 
 .sort-row select:last-child {
     width: 150px;
+}
+
+
+.library-reading {
+    font-size: 16px;
+    color: #8a7c86;
+    margin: 0 0 10px;
 }
 
 @media (max-width: 600px) {
@@ -757,7 +782,10 @@ h1 {
             <button class="primary" onclick="randomWord()">🎲 สุ่มคำศัพท์</button>
 
             <div class="question-box">
-                <h2 id="question">กดสุ่มเพื่อเริ่ม</h2>
+                <div id="question">
+                    <div id="questionWord">กดสุ่มเพื่อเริ่ม</div>
+                    <div id="questionReading"></div>
+                </div>
                 <p>คำนี้แปลว่าอะไร?</p>
                 <input id="answerInput" type="text">
                 <br><br>
@@ -1030,8 +1058,10 @@ function resetPractice() {
         N1: []
     };
 
-    document.getElementById("question").innerText =
-        "กดสุ่มเพื่อเริ่ม";
+    document.getElementById("questionWord").innerText =
+    "กดสุ่มเพื่อเริ่ม";
+
+    document.getElementById("questionReading").innerText = "";
 
     document.getElementById("answerInput").value = "";
     document.getElementById("result").innerText = "";
@@ -1244,7 +1274,15 @@ function randomWord() {
     }
 
 
-    let usedForLevel = usedWords[selectedLevel] || [];
+    let historyKey = selectedLevel === "ALL"
+    ? "ALL"
+    : selectedLevel;
+
+    if (!usedWords[historyKey]) {
+        usedWords[historyKey] = [];
+    }
+
+    let usedForLevel = usedWords[historyKey];
 
 
     let availableWords =
@@ -1276,8 +1314,13 @@ function randomWord() {
     usedWords[selectedLevel].push(currentWord);
 
 
-    document.getElementById("question").innerText =
-        currentWord.word;
+    
+    document.getElementById("questionWord").innerText =
+    currentWord.word;
+
+    document.getElementById("questionReading").innerText =
+    currentWord.reading || "ยังไม่มีคำอ่าน";
+
 
     document.getElementById("answerInput").value = "";
     document.getElementById("result").innerText = "";
@@ -1566,6 +1609,12 @@ function showLibrary() {
             "<h3 class='japanese-word'>" +
             escapeHTML(item.word) +
             "</h3>" +
+
+            
+            "<p class='library-reading'>" +
+            escapeHTML(item.reading || "ยังไม่มีคำอ่าน") +
+            "</p>" +
+
 
             "<p>🇬🇧 English: " +
             escapeHTML(item.meaning || "ยังไม่มี") +
